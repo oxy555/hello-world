@@ -50,40 +50,41 @@ pouch exec -it {ID}
 完成以上步骤后，新建的基础容器应该已经启动并且能成功登入容器了。
 ![](https://i.loli.net/2018/07/30/5b5edd8c3f50f.png)
 
-### 开发环境的配置
-体验版镜像中已经包含的工具有：vim、make、git、go等基本工具，用户无需在配置。其中 pouch 的源码路径位于 /root/gopath/src/github.com/alibaba/pouch 。
+### Development environment configuration
+The tools included in the experience image are: vim, make, git, go and other basic tools. And the source code of pouch is located at /root/gopath/src/github.com/alibaba/pouch.
 
-- 对于习惯 Vim 开发的同学，可直接在虚拟机中进行开发（需将 pouch 目录下的文件替换为自己 repo 中 fork 的项目文件）。
+- For users who are familiar with Vim development, you can develop in the virtual machine (replace the files in the pouch directory with the project files they folk to your own repository).
 
-- 对于习惯 IDE 开发的同学，可以将代码拉取到宿主机器，而后将宿主机器对应目录挂载到虚拟机中 pouch 的源码目录下。
+- For users who are familiar with IDE development, you can pull the code to the host machine and then mount the directory to the source directory of the pouch in the virtual machine.
 
-### GitHub配置
-将远端代码 clone 到本地可使用 HTTPS 或 SSH 的方式。
+### GitHub configuration
+Use HTTPS or SSH to clone the remote code to local. 
 
-本文推荐使用 SSH 的连接方式，可省去后期向远端提交代码时每次输入密码的繁琐，但需先在 github.com 的个人账号下添加 SSH key，[github 官方文档](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/)已有很详细的生成及添加方式，本文不予赘述。
+SSH is recommended here, which can save the trouble of entering the password every time you submit the code to the remote end. But the SSH key need to be added under your personal github account first. Details of generating and adding SSH key can refer to the [github official document](https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/)
 
-在本机中仍需配置为 git 配置 github 账号的相关信息，具体配置如下：
+On host machine, you still need to configure your github account as follows:
+
 ``` git
 git config --global user.name YOUR_USERNAME
 git config --global user.email YOUR_EMAIL
 ```
-### 宿主机多 github 账号配置
-在宿主机器中可能存在配置多 github 账号的需求，可通过配置文件解决：
+### multiple github accounts configuration on host machines
+There may be a need to configure multiple github accounts on the host machine, which can be resolved through the configuration file:
 
 ``` bash
-# 通过 ssh-keygen 生成公钥密钥，如生成在 ~/.ssh下
+# Generate a public key by ssh-keygen, for example, generate under ~/.ssh
 ssh-keygen -t rsa -b 4096 -C "your.email@address.com"
 
-# 将公钥文件添加到对应的站点
+# Add the public key file to the corresponding site
 
-# 将私钥添加到 SSH agent 上（文件替换成刚才生成的私钥）
+# Add the private key to the SSH agent (replace the file with the private key just generated)
 ssh-add -K ~/.ssh/id_rsa 
 ```
-完成以上步骤后，在 ~/.ssh 下创建 config 文件，按照格式写入即可。
-- Host 可自定
-- HostName 为站点地址
-- User 填写为 git
-- IdentityFile 为私钥地址
+After completing the steps above, create a config file under ~/.ssh and write it in the following format: 
+- Host: can be customized
+- HostName: the site address
+- User: git
+- IdentityFile: the private key address
 ``` bash
 # first.github (first@gmail.com)
 Host github.com
@@ -98,15 +99,15 @@ User git
 IdentityFile ~/.ssh/id_rsa_second
 ```
 
-### 宿主机器文件夹的挂载
-在挂载时，需要用到 VirtualBox 的增强插件，在虚拟机中的安装方式如下：
+### File mounting on host machine 
+When mounting, enhanced plug-in for VirtualBox are needed, which can be installed as follows:
 ``` bash
 apt install virtualbox-guest-x11
 ```
-在 VirtualBox 中，将宿主机器的工程目录文件夹设置为【共享文件夹】。需选择【自动挂载】和【固定分配】。
+In VirtualBox，Set the project directory folder of the host machine to `shared folder`, and choose `automatic mount` and `fixed assignment`。
 ![](https://i.loli.net/2018/07/30/5b5eee8226510.png)
-进入到 /root/gopath/src/github.com/alibaba/ 目录下，将原有的 pouch 目录下的文件移除（保留 pouch 文件夹），在目录下执行命令进行挂载。（其中 SHARE_FOLDER_NAME 为共享文件夹的名称）
+go to the directory /root/gopath/src/github.com/alibaba/, remove the files from the original pouch directory(retain the pouch folder)，execute command to mount in the directory. (where SHARE_FOLDER_NAME is the name of the shared folder)
 ``` bash
 sudo mount -t vboxsf SHARE_FOLDER_NAME pouch/
 ```
-可启动 pouch 服务检测配置是否正确。
+The pouch service can be started to detect if the configuration is correct.
